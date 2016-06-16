@@ -1,6 +1,5 @@
 # classes -- cards, deck, hand, players, dealer, game
 
-
 # Data: has suit and value
 # Behavior: none
 class Card
@@ -33,8 +32,7 @@ end
 # Data: Cards
 # Behavior: Shuffle, Draw
 class Deck
-  attr_reader :cards
-  def initialize
+  def run
     @cards = []
     [:Hearts, :Diamonds, :Spades, :Clubs].each do |suit|
       (2..14).each do |value|
@@ -43,9 +41,9 @@ class Deck
     end
   end
 
-  def count  #deck can be counted????
-    @cards.count
-  end
+  # def count  #deck can be counted????
+  #   @cards.count
+  # end
 
   def shuffle  #deck can be shuffled
     @cards.shuffle!
@@ -54,9 +52,6 @@ class Deck
   def draw   #deck can draw cards
     @cards.shift
   end
-
-  ##########deck can know what's in the deck
-  ##########deck can know what's not in the deck
 end
 
 # Deck has 52 Cards
@@ -65,33 +60,34 @@ end
 # Data: Deck subset
 # Behavior: Holds cards, Starts with 2 cards, draws more cards, plays cards
 class Hand
-  attr_reader :face_down, :face_up
-  def initialize(face_down, face_up)  # hand starts with 2 cards
-    @face_down = face_down
-    @face_up = face_up
+  def run
     @deck = Deck.new
+    @deck.run
     @deck.shuffle
   end
 
   def player_draw
     @hand = [:face_down, :face_up].map do
-      @hand = @deck.draw
+      @deck.draw
     end
-
   end
 
   def dealer_draw
     @hand = [:face_down, :face_up].map do
-      @hand = @deck.draw
-      # puts @dealer_hand = deck.draw
+      @deck.draw
     end
   end
 
-
-  def calc_total   # calculate total value in hand
-    puts @cards.count
+  def hit_me
+    @hand = @deck.draw
 
   end
+
+  #
+  # def calc_total   # calculate total value in hand
+  #   puts @cards.count
+  #
+  # end
 
   # def bust
   #   if calc_total > 21
@@ -106,21 +102,24 @@ class Hand
 end
 
 
-class Player
-  # a player has money
-  # player can gain or lose money
-  # player has a hand
-  # player can draw
-  def hit_me #INCOMPLETE
-    @hand.map do |draw|
+# class Player     ### broken
+#   def hit
+#     @hit = [hand.player_draw, :face_up].map do
+#       @deck.draw
+#     end
+#   end
 
-    # puts "Would you like to draw a card?"
-    # response = gets.chomp.downcase
-    # if response == "yes"
-      @hand << deck(suit, value)
-    end
-  end
-end
+
+#   # a player has money
+#   # player can gain or lose money
+#   # player has a hand
+#   # player can draw
+#   # def hit_me #INCOMPLETE
+#   #   @hand.map do
+#   #     @deck.draw
+#   #
+#
+# end
 
 class Dealer
   # dealer has a deck
@@ -129,15 +128,63 @@ end
 
 class Game
   def run
-    deck = Deck.new
-    hand = Hand.new(deck.draw, deck.draw)
+    # deck = Deck.new
+    # hand = Hand.new(deck.draw, deck.draw)
+    hand = Hand.new
+    hand.run
+    hit_me = hand.hit_me
+    system("clear")
     puts "Let's play some Blackjack!"
+    puts "__________________________"
+    puts
 
     player_hand = hand.player_draw
     dealer_hand = hand.dealer_draw
 
-    puts "Player's cards are #{player_hand}"
-    puts "Dealer's cards are #{dealer_hand}"
+
+    puts "Player is dealt:  #{player_hand.join(" and ")}."
+    puts
+    puts "Dealer is dealt:  #{dealer_hand.join(" and ")}."
+    puts
+
+    loop do
+      print "Would you like to draw another card? "
+      response = gets.chomp.downcase
+      case response
+      when "hit me", "hit", "yes", "y"
+        system("clear")
+        puts "Player is dealt another card"
+        puts "____________________________"
+        puts
+        player_hand << hand.hit_me
+        last_elem = player_hand.pop
+        puts "Player's  cards:  #{player_hand.join(", ")}, and #{last_elem}."
+        player_hand << last_elem
+        puts
+        puts "Dealer's  cards:  #{dealer_hand.join(" and ")}."
+        puts
+      when "stay", "no", "n"
+        puts
+        break
+      else
+        puts
+        puts "Sorry, I didn't catch that..."
+        puts
+      end
+    end
+
+    # last_elem = over_eighteen.pop
+    #       puts "You can #{over_eighteen.join} and #{last_elem}."
+
+    puts
+
+    if player_hand > dealer_hand
+      puts "Player wins"
+    elsif player_hand < dealer_hand
+      puts "Computer wins"
+    else
+      puts "TIE"
+    end
 
   # game sets up the dealer, deck, and player
   # game controls input and output
