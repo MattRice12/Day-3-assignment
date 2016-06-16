@@ -53,20 +53,20 @@ end
 # Data: Deck subset
 # Behavior: Holds cards, Starts with 2 cards, draws more cards, plays cards
 class Hand
-  def start_hand   # hand starts with 2 cards
+  def initialize  # hand starts with 2 cards
     @hand = []
     deck = Deck.new
     deck.shuffle
-    [:face_down, :face_up].map do
+    [:face_down, :face_up].map do |draw|
+      draw = deck.draw
       @hand << deck.draw
     end
   end
 
-  # def calc_total   # calculate total value in hand
-  #   @hand.value.each do |calc|
-  #     calc =
-  #   end
-  # end
+  def calc_total   # calculate total value in hand
+
+
+  end
 
   def bust
     if calc_total > 21
